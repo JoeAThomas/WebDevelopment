@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title> Question 1 </title>
+
+   <style>
+       table, th, td{
+		border: 2px solid black;
+		border-collapse: collapse;
+            }
+       
+   </style>
+
+
+	<script>		
+	function myFunction() {
+		document.getElementById("myForm").reset();
+	}	
+	</script>
+	
+		
+</head>
+
+
+
+<body>
+    
+	<form id="myForm">
+	
+		Users Name: <input type="text" name="userName" id="userName" /><br/><br/>
+        
+		<input type="date" id="myDate" value="2000-05-09"><br/><br/>
+        
+		<!-- drop down menu for the eye color selections. -->
+        <!-- the user selects a color, it is then displayed in the box ready to be diplayed in table.-->
+		Select Eye Color:
+	       <select name="direction" id="eyeColor"> 
+		      <option value="Blue"selected>Blue</option>
+		      <option value="Brown">Brown</option>
+		      <option value="Green">Green</option>
+		      <option value="Grey">Grey</option>
+		      <option value="Other">Other</option>
+	       </select><br><br/>
+        
+	 </form>
+	    
+       <!-- two buttons which allows the user to reset the top form or display selected information. --> 
+       <!-- the counter for rows is also initialised here as it is partnered with the display button. -->
+        <input type="button" onclick="myFunction()" value="Reset form"><br/><br/>
+		<input type="button" value="Display" onclick="addRow();onClick();" /><br/><br/>
+        Counter for Rows: <input type="text" id="inc" value="0"><br/><br/>
+    
+		
+    
+    
+	<!-- the creation of the table and the basic layout is created at the top-->
+    <!-- the table has also been given the id "myTable" -->
+    <!-- which allows the table to be referenced later.-->
+	<table id="myTable"> 	
+		<tr>
+			<th> Users Name </th> 
+			<th> Users Age </th> 
+			<th> Users Eye Colour </th> 
+			
+		</tr>
+            
+        </table>
+		
+		<script>
+         
+         // this allows the previosly metioned counter to add 1 once the display is clicked.
+         // by calling the onClick command.
+         var i = 0;
+         function onClick() {
+         document.getElementById('inc').value = ++i;
+    }
+    // initialises the new cells which would be added when the user selects the "display" button.
+	function addRow() {
+			var table = document.getElementById("myTable");
+			var row = document.createElement('tr')
+			var cell1 = document.createElement('td')
+			var cell2 = document.createElement('td')
+			var cell3 = document.createElement('td')
+			var cell4 = document.createElement('td')
+            
+			//calls on the previously created cells and rows.
+            cell1.innerHTML = document.getElementById('userName').value;
+            cell2.innerHTML = document.getElementById('myDate').value;
+            cell3.innerHTML = document.getElementById('eyeColor').value;
+            cell4.innerHTML = "DELETE";
+            
+             // this is the command for the delete button displayed on each row.
+             // the "event" and "target" command are used to specify the current row which needs to be removed. 
+             // this then also removes (decrements) from the row counter.
+             cell4.onclick = function(event){ 
+                   var target=event.target;
+                   var d = target.parentElement.rowIndex;                   
+                   document.getElementById("myTable").deleteRow(d);
+                   document.getElementById('inc').value= --i;
+                 
+                
+            }
+            // allows the rows of information to be added.
+            row.appendChild(cell1);
+            row.appendChild(cell2);
+            row.appendChild(cell3);
+            row.appendChild(cell4);
+        
+            
+            var rows = table.getElementsByTagName("tr").length;
+            table.children[0].insertBefore(row,table.children[0].childNodes[rows]);
+            
+        
+    }
+    
+		</script>
+		
+    </body>
+		
+</html>
