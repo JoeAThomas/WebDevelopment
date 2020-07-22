@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+        <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css"> 
+
+        <script> 
+
+        function loadNewPage(value){
+                  $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/hygiene.php?op=get&page='+ value,  // url
+                  function (values) { //calls the data from the hygiene.php, collects the data.
+                      console.log(values); //allows for checking of console log within chrome browser.
+                      $data = JSON.parse(values); //collects the data gained from the JQuery and turns it into JSON.
+                      $data.forEach(function(object){ //loops getting correct data from the hygiene.php file.
+                          $("#myTable").append( //calls the pre-built table from the body of this file. 
+                            "<tr>" + //starts the table tag.
+                                  " <td>"+ object.business + "</td>"+ //collects the businessName data data from hygiene.php, displays it within the business section of myTable.
+                                  " <td>"+ object.address +"</td>"+ //collects the address data data from hygiene.php, displays it within the address section of myTable.
+                                  " <td>"+ object.type +"</td>"+ //collects the type data data from hygiene.php, displays it within the type section of myTable.
+                                  " <td>"+ object.rating +" </td>"+ //collects the rating data data from hygiene.php, displays it within the rating section of myTable.
+                                  " <td>" + '<button id= "businessName" type= "button" value="'+object.business+'">Get Rating</button>' +'</td>' + //creates a button within the table, allows user to get the ratings of the business.
+                                  " <td>"+ object.date +"</td>"+ //collects the date data data from hygiene.php, displays it within the date section of myTable.
+                            "</tr>"); //ends the table tag.
+                      });
+                   })
+                };
+           
+              
+                $(document).ready(function(){ //when the page is opend it executes operations within the fucntion. 
+                  loadNewPage(1); //creates the table and populates it with page ones data when the page is loaded.
+                 $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/hygiene.php?op=pages', function (data, pages){//calls the data from the hygiene.php, collects the data.
+                   var pageButtons = $('#pageButtons'); //creates a variable from the buttons at the page buttom of the file.
+                   for (var i = 1; i <= 38; i++) { //loops, creating a button for each page of the given data. 
+                     pageButtons.append('<button onclick="changePage(this.value)" value="' + i + '">'  + i + '</button>'); //the creation of the previously mentioned buttons, 38 pages means creates 38 buttons. 
+                   } //assigns a value to every button so that I can map the page numbers to the given button. the "i++" adds the number by one every time button is created.
+                 });
+                });
+
+                function changePage(val) { //empties the table and then calls the loadPage function to repoulate it depending on the button that was pressed.
+                  console.log(val);
+                    $("#myTable").find("tr:gt(0)").empty();// empties the table other than the header.
+                    loadNewPage(val); // called the loadPage fucntion which then repopulates the table depending on the button value. I have matched the page buttons with page numbers.
+                    };
+
+                
+
+                $(document).on("click", "button#businessName", function() { //creates an a onclick for the businessName button created on each row of the table. 
+                 var businessName = $(this).val();
+                  $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/rating.php?businessName='+ businessName, function(data){ // JQuery gets the script from from rating.php file, saves data in the funciton.          
+                  var average = []; // creates an array in which will store the averate rating from given rating.php
+                  var total = []; //creates an array in which will store the total rating from given rating.php
+                  console.log(data);
+                 // data = JSON.parse(data);
+
+                  if(data.length == 0){ //if the data businessName thats been selected has no review data triggers alert which tells user, no rating found.
+                      alert("No Ratings found...")
+                  }else{
+                  
+                  $.each(data, function(key, object, ){ //if rating is found, create two arrays one for averageRating/ totalRating.
+                    average += object.avgRating ;
+                    total += object.totalRatings 
+                        
+                        alert("Average Customer Rating is: " + average + ".  Total Number of Ratings: " + total ); //string two arrays together in alert.
+                         });
+                      };
+                    });
+                  });
+
+        $("#SearchResults").submit(function(event){ 
+          event.preventDefault(); //stops the default action of an element from happening.
+          $("#myTable").find("tr:gt(0)").empty(); //wipes the page, other than the header.
+              $.get('https://www.cs.kent.ac.uk/people/staff/yh/co539_a2_data/hygiene.php?op=search&business='+ $("input:first").val(), // url
+                  function(values) {  //calls the data from url, collects the data
+                    $data = JSON.parse(values); //collects the data gained from the JQuery and turns it into JSON.
+                    $.each(data, function(key, value) { //used to iterate over the the key and value.
+                          $("#myTable").append( //calls the pre-built table from the body of this file. 
+                            "<tr>" +
+                                  " <td>"+ value.business + "</td>"+ // recollects the businessName data data from hygiene.php, displays it within the business section of myTable.
+                                  " <td>"+ value.address +"</td>"+ //recollects the address data data from hygiene.php, displays it within the address section of myTable.
+                                  " <td>"+ value.type +"</td>"+ //recollects the type data data from hygiene.php, displays it within the type section of myTable.
+                                  " <td>"+ value.rating +" </td>"+ //recollects the rating data data from hygiene.php, displays it within the rating section of myTable.
+                                  " <td>" + '<button id= "businessName" type= "button" value="'+value.business+'">Get Rating</button>' +'</td>' + //recollects a button within the table, allows user to get the ratings of the business.
+                                  " <td>"+ value.date +"</td>"+  //collects the date data data from hygiene.php, displays it within the date section of myTable.
+                            "</tr>");
+                        });
+                      })
+                    });
+
+                $( function() {
+                var chosenBusinesses  =  [ //makes two arrays with preset businessNames from hygiene.php
+                    "Absolutely Ravenous",
+                    "Burger King",
+                    "Headcorn Bowls Club",
+                    "KFC",]
+
+                $("#searchBox").autocomplete({ //auto fills them into the search bar at bottom of page.
+                    source: chosenBusinesses 
+                });
+              });
+
+          </script> 
+
+        <style>
+        table {
+          font-family: arial, sans-serif;
+          border-collapse: collapse;
+          width: 100%;
+          border: 2px solid black;
+        }
+        
+        td, th {
+          border: 1px solid black;
+          text-align: left;
+          padding: 8px;
+        }
+        
+        tr:nth-child(even) {
+          background-color: #dddddd;
+          background-image: linear-gradient(to right, #cfcece , #ffffff);
+        }
+
+        #rcorners2 {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            border-radius: 25px;
+       
+            padding: 20px; 
+            width: 50%;
+            height: 100%;  
+          }
+
+          body{
+             font-family: arial, sans-serif;
+              background-image: linear-gradient(to right, #ffffff , #cfcece);
+          }
+
+        </style>
+        
+    </head>
+
+    <title>Hygiene Inspections</title>
+
+    <body>
+
+        <h1 align = "center"><u>Hygiene Rating</u></h1>
+
+        <p id="rcorners2"> Uses data from the Food Standards Agency. The Food Standards Agency makes the
+            results of restaurants’, and other businesses serving food hygiene inspections publicly available.  </p>
+
+            <p align = "center" id="pageButtons"> </p>
+
+            <table id = "myTable">
+                <tr>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Type</th>
+                    <th>Hygiene Rating</th>
+                    <th>Customer Rating</th>
+                    <th>Rating Date</th>
+                </tr>
+                           
+            </table>
+           
+            <p> <form  id="SearchResults" align = "center"  >Business Name: 
+                <input type="text" placeholder="Search: " id="searchBox" name="search">
+                <input type="submit"> 
+              </form></p> 
+
+    </body>
+</html>
